@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by ezakyurek.*
+*This project has been created as part of the 42 curriculum by ezakyure.*
 
 # get_next_line
 
@@ -63,9 +63,11 @@ This keeps memory usage proportional to one line (plus at most one extra
 a single extra byte past what is needed to complete the current line.
 
 In the bonus version, the same three functions are reused unchanged; the
-only difference is that the static variable becomes an array of leftover
-buffers indexed by file descriptor (allocated once, on the first call),
-so each file descriptor's reading state is kept independent from the others.
+only difference is that the static variable becomes a linked list of nodes
+(one per file descriptor), each holding its own leftover buffer. A node is
+created the first time its file descriptor is seen and removed once that
+file descriptor reaches end of file, so each file descriptor's reading
+state is kept independent from the others.
 
 ## Resources
 

@@ -14,91 +14,81 @@
 
 int	ft_strlen(char *str)
 {
-	int	counter;
+	char	*s;
 
-	counter = 0;
-	while (str[counter] != '\0')
-		counter++;
-	return (counter);
+	s = str;
+	while (*s)
+		s++;
+	return (s - str);
 }
 
 int	newline_counter(char *raw_str)
 {
-	int	counter;
+	char	*s;
 
-	counter = 0;
-	while (raw_str[counter] != '\n' && raw_str[counter] != '\0')
-		counter++;
-	if (raw_str[counter] == '\n')
-		counter++;
-	return (counter);
+	s = raw_str;
+	while (*s && *s != '\n')
+		s++;
+	if (*s == '\n')
+		s++;
+	return (s - raw_str);
 }
 
 char	*ft_strjoin(char *left_str, char *buff)
 {
-	size_t	i;
-	size_t	j;
 	char	*str;
+	char	*w;
+	char	*r;
+	int		l;
 
-	if (!left_str)
-	{
-		left_str = (char *)malloc(1 * sizeof(char));
-		left_str[0] = '\0';
-	}
-	if (!left_str || !buff)
+	if (!buff)
 		return (NULL);
-	str = malloc(sizeof(char) * ((ft_strlen(left_str) + ft_strlen(buff)) + 1));
-	if (str == NULL)
-		return (NULL);
-	i = -1;
-	j = 0;
+	l = 0;
 	if (left_str)
-		while (left_str[++i] != '\0')
-			str[i] = left_str[i];
-	while (buff[j] != '\0')
-		str[i++] = buff[j++];
-	str[ft_strlen(left_str) + ft_strlen(buff)] = '\0';
-	free(left_str);
+		l = ft_strlen(left_str);
+	str = malloc(sizeof(char) * (l + ft_strlen(buff) + 1));
+	if (!str)
+		return (NULL);
+	w = str;
+	r = left_str;
+	while (r && *r)
+		*w++ = *r++;
+	r = buff;
+	while (*r)
+		*w++ = *r++;
+	*w = '\0';
+	if (left_str)
+		free(left_str);
 	return (str);
 }
 
 char	*ft_strchr(char *s, int c)
 {
-	int	i;
-
-	i = 0;
 	if (!s)
 		return (0);
-	if (c == '\0')
-		return ((char *)&s[ft_strlen(s)]);
-	while (s[i] != '\0')
+	while (*s)
 	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
-		i++;
+		if (*s == (char)c)
+			return (s);
+		s++;
 	}
+	if ((char)c == '\0')
+		return (s);
 	return (0);
 }
 
 void	free_node(t_gnl **lst, int fd)
 {
-	t_gnl	*cur;
-	t_gnl	*prev;
+	t_gnl	*tmp;
 
-	cur = *lst;
-	prev = NULL;
-	while (cur)
-	{
-		if (cur->fd == fd)
-			break ;
-		prev = cur;
-		cur = cur->next;
-	}
-	if (!cur)
+	if (!*lst)
 		return ;
-	if (prev)
-		prev->next = cur->next;
-	else
-		*lst = cur->next;
-	free(cur);
+	if ((*lst)->fd == fd)
+	{
+		tmp = *lst;
+		*lst = tmp->next;
+		free(tmp);
+		return ;
+	}
+	free_node(&(*lst)->next, fd);
 }
